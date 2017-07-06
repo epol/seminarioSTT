@@ -1,0 +1,381 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{colonequals}
+\usepackage{mathtools}
+\usepackage{xfrac}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[utf8x]{inputenc}
+\usepackage[italian]{babel}
+
+%\setlength{\parindent}{0in}
+\usepackage{fullpage}
+
+\theoremstyle{plain}
+\newtheorem{myteo}{Teorema}[section]
+\newtheorem{mylem}{Lemma}[section]
+\newtheorem{mypro}{Proposizione}[section]
+\newtheorem*{myteo*}{Teorema}
+\newtheorem*{mylem*}{Lemma}
+\newtheorem*{mypro*}{Proposizione}
+
+\theoremstyle{definition}
+\newtheorem{mydef}{Definizione}[section]
+\newtheorem{myes}{Esempio}[section]
+\newtheorem*{mydef*}{Definizione}
+\newtheorem*{myes*}{Esempio}
+
+\theoremstyle{remark}
+\newtheorem{mynot}{Nota}[section]
+\newtheorem{myoss}{Osservazione}[section]
+\newtheorem*{mynot*}{Nota}
+\newtheorem*{myoss*}{Osservazione}
+
+\newcommand{\obar}[1]{\overline{#1}}
+\newcommand{\ubar}[1]{\underline{#1}}
+
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\pa}[1]{\left(#1\right)}
+\newcommand{\ang}[1]{\left<#1\right>}
+\newcommand{\bra}[1]{\left[#1\right]}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+
+\newcommand{\pfrac}[2]{\pa{\frac{#1}{#2}}}
+\newcommand{\bfrac}[2]{\bra{\frac{#1}{#2}}}
+\newcommand{\psfrac}[2]{\pa{\sfrac{#1}{#2}}}
+\newcommand{\bsfrac}[2]{\bra{\sfrac{#1}{#2}}}
+
+\newcommand{\der}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pder}[2]{\pfrac{\partial #1}{\partial #2}}
+\newcommand{\sder}[2]{\sfrac{\partial #1}{\partial #2}}
+\newcommand{\psder}[2]{\psfrac{\partial #1}{\partial #2}}
+
+\newcommand{\intl}{\int \limits}
+
+\DeclareMathOperator{\de}{d}
+\DeclareMathOperator{\id}{Id}
+
+\newcommand*{\eqdef}{\ensuremath{\overset{\mathclap{\text{\tiny def}}}{=}}}
+
+\title{Appunti seminario STT}
+\author{Enrico Polesel}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+\section{Sintassi}
+
+La \textit{signature} $\Sigma$ \`e un insieme finito di simboli di
+funzione e il loro numero di argomenti.
+
+\begin{align*}
+  L,M,N.T,U,V & \coloncolonequals & \text{terms} \\
+  & a,b,c,\dots,k,\dots,m,n,\dots,s & \text{name} \\
+  & x,y,z & \text{variable} \\
+  & f(M_1,\dots,M_l) & \text{function application}
+\end{align*}
+con $f\in\Sigma$ e $l$ opportuno.
+
+ground term: non contiene variabili (ma può contenere nomi e
+costanti).
+
+$u,v,w$: metavariabili per nomi e variabili.
+
+\begin{align*}
+  P,Q,R & \coloncolonequals & \text{plain processes} \\
+  & \mathbf{0} & \text{null process} \\
+  & P | Q & \text{parallel composition} \\
+  & !P & \text{replication} \\
+  & \nu n.P & \text{name restriction (new)} \\
+  & if\ M=N\ then\ P\ else\ Q & \text{conditional} \\
+  & N(x).P & \text{message input} \\
+  & \obar{N}\left< M\right> .P & \text{message output}
+\end{align*}
+
+\begin{align*}
+  A,B,C & \coloncolonequals & \text{extended processes} \\
+  & P & \text{palin process} \\
+  & A | B & \text{parallel composition} \\
+  & \nu n.A & \text{name restriction} \\
+  & \nu x.A & \text{variable restriction} \\
+  & \left\{ \sfrac{M}{x} \right\} & \text{active substitution}
+\end{align*}
+
+La sostituzione $\left\{ \sfrac{M}{x} \right\}$ \`e pu\`o agire in
+tutti i contesti con cui viene a contatto, per controllare questa cosa
+possiamo mettere una restrizione sulla variabile $\nu x.\left( \left\{
+    \sfrac{M}{x} \right\} | P\right)$.
+
+Sostituzioni multiple e vettori:
+\[ \sigma, \left\{ \sfrac{M_1}{x_1},\dots,\sfrac{M_l}{x_l} \right\},
+  \left\{ \sfrac{\tilde M}{\tilde x} \right\} \]
+
+usiamo cycle-free.
+
+$x\sigma$: immagine di $x$ in $\sigma$, $T\sigma$: risultato
+dell'applicazione di $\sigma$ alle variabili libere di $T$.
+
+\begin{align*}
+  fv(x) & \eqdef \set{x} \\
+  fv(n) & \eqdef \emptyset \\
+  fv\pa{f\pa{ M_1, \dots, M_l}} & \eqdef fv\pa{M_1} \cup \cdots \cup
+                                  fv\pa{M_l} \\
+%  fv(\mathbf{0}) & \eqdef \emptyset \\
+%  fv(P|Q) & \eqdef fv(P) \cup fv(Q) \\
+%  fv(!P) & \eqdef fv(P) \\
+%  fv(\nu n.P) & \eqdef fv(P) \\
+  & \vdots \\
+  fv(N(x).P) & \eqdef fv(N) \cup \pa{fv(P) \setminus \set{x}} \\
+  & \vdots \\
+  fv(\nu x.A) & \eqdef fv(A) \setminus \set{x} \\
+  fv\pa{ \set{ \sfrac{M}{x} } } & \eqdef fv(M) \cup \set{x}\\
+  \\
+  fn(x) & \eqdef \emptyset \\
+  fn(n) & \eqdef \set{n} \\
+  & \vdots \\
+  fn(\nu n.P) & \eqdef fn(P)\setminus \set{n} \\
+  fn(N(x).P) & \eqdef fn(N) \cup fn(P) \\
+  fn\pa{ \set{ \sfrac{M}{x} } } & \eqdef fv(M) \\
+  \\
+  dom(P) & \eqdef \emptyset \\
+  dom(A|B) & \eqdef dom(A) \cup dom(B) \\
+  dom(\nu n.A) & \eqdef(A) \\
+  dom(\nu x.A) & \eqdef(A) \setminus \set{x}\\
+  dom\pa{ \set{ \sfrac{M}{x}}} & \eqdef \set{x}           
+\end{align*}
+
+Supponiamo le $\sigma$ cycle-free, le sostituzioni uniche (cioè che se
+ho $A|B$ allora $dom(A) \cap dom(B) = \emptyset$) e che $x\in dom(A)$
+se $\nu x.A$.
+
+$A$ \`e chiuso sse $dom(A) = fv(A)$.
+
+Frame ($\varphi$,$\psi$): un extended process costrutio da
+$\mathbf{0}$ e sostituzioni $\set{\sfrac{M}{x}}$.
+
+Dato un processo $A$ posso costruire $A \rightarrow \varphi(A)$
+togliendo tutto ciò che non è una sostituzione attiva. Questo è il
+comportamento \textbf{statico}.
+
+
+Sort system per tipare bene (vedi fig.2) terms e processes. Ogni
+variabile e ogni nome ha un sort.
+
+\section{Semantica operazionale}
+
+La nostra semantica si basa su una relazione di equivalenza $\equiv$.
+
+Equipaggiamo la signature $\Sigma$ con una teoria equazionale, per
+esempio generata partendo da assiomi o rewrite rules. Avrò delle
+relazioni del tipo $\Sigma \vdash M=N$.
+
+Contex: un'espressione con un buco. Evaluation context: un contex il
+cui buco non è soggetto a replicazione, condizionale, input o
+output. Il contesto $E[\_]$ chiude $A$ se $E[A]$ \`e chiuso.
+
+Equivalenza strutturale $\equiv$: minima relazione che soddisfa le
+opportune regole (vedi articolo).
+
+Ogni extended process chiuso può essere riscritto come
+\[ A \equiv \nu \tilde n . \pa{ \set{\sfrac{\tilde M}{ \tilde x}} | P
+  } \]
+dove $P$ \`e un plain process chiuso.
+
+In particolare ogni frame pu\`o essere riscritto come $\varphi \equiv
+\nu \tilde n. \set{ \sfrac{\tilde M}{\tilde x}}$ con $fv(\tilde M) =
+\emptyset$ e $\set{\tilde n} \subseteq (\tilde M)$. L'insieme
+$\set{\tilde x}$ \`e il dominio di $x$.
+
+L'internal reduction $\rightarrow$ \`e la pi\`u piccola relazione che
+soddisfa le tre opportune regole. La pi\`u interessante \`e la COMM:
+\[ \bar N \ang{x}.P | N(x).Q \rightarrow P|Q \]
+infatti se $x\not\in fv(N) \cup fv(M) \cup fv(P)$:
+\begin{align*}
+  \bar{N}\ang{M}.P | N(x).Q & \equiv \nu x.\pa{ \set{\sfrac{M}{x}} | \bar
+                              N\ang{x}.P | N(x).Q} \\
+  & \rightarrow \nu x .\pa{\set{\sfrac{M}{x}}|P|Q} \\
+  & \equiv P|Q\set{\sfrac{M}{x}}
+\end{align*}
+
+\section{Equivalenze}
+
+\subsection{Observational equivalence}
+
+Diciamo che $A \Downarrow a$ se $A$ pu\`o inviare un messaggio sul
+canale $a$, cio\`e $A \rightarrow ^* \equiv E\bra{\bar a \ang{M} .P}$
+per qualche contesto $E$ che non lega $a$.
+
+\begin{mydef}[Observational bisimulation]
+  Una relazione simmetrica $\mathcal{R}$ fra processi estesi chiusi
+  con lo stesso dominio tale che $A \mathcal{R} B$ implica:
+  \begin{enumerate}
+  \item $A \Downarrow a \Rightarrow B \Downarrow a$;
+  \item $A' \text{closed}, A \rightarrow ^* A' \Rightarrow \exists B'\
+    B \rightarrow ^* B' \text{ with } A' \mathcal{R} B'$;
+  \item $\forall E[\_]$ contesto di valutazione chiuso $E[A]
+    \mathcal{R} E[B]$.
+  \end{enumerate}
+\end{mydef}
+
+L'equivalenza osservazionale $\approx$ \`e la pi\`u grande
+bisimulazione osservazionale.
+
+In generale non \`e decidibile.
+
+\subsection{Static Equivalence}
+
+\begin{mydef}[Term equivalency in frames]
+  Due termini $M,N$ sono equivalenti nel frame $\varphi$ se e solo se:
+  \begin{itemize}
+  \item $fv(M) \cup fv(N) \subseteq dom(\varphi)$
+  \item $\varphi \equiv \nu \tilde n. \sigma$
+  \item $M\sigma = N \sigma$
+  \item $\set{\tilde n} \cap \pa{ fn(M) \cup fn(N)} = \emptyset$.
+  \end{itemize}
+  per degli opportuni nomi $\tilde n$ e sostituzioni $\sigma$. Si
+  scrive $\pa{M=N}\phi$.
+\end{mydef}
+
+\begin{mydef}[Equivalenza statica]
+  Due frame chiusi $\varphi, \psi$ sono staticamente equivalenti
+  ($\varphi \approx _s \psi$) quando 
+  \begin{itemize}
+  \item $dom(\varphi) = dom(\psi)$;
+  \item $\forall M,N$ termini $(M=N)\varphi \Leftrightarrow (M=N)\psi$.
+  \end{itemize}
+  Due processi estesi chius sono staticamente equivalenti ($A \approx
+  _s B$) se i loro frame sono staticamente equivalenti.
+\end{mydef}
+
+\begin{mylem}
+  Dati $A,B$ processi estesi chiusi.
+  \begin{itemize}
+  \item $A \equiv B \vee A \rightarrow B \Rightarrow A \approx _s B$;
+  \item $A \approx _s B \rightarrow E[A] \approx _s E[B]$ per ogni
+    contesto di valutazione chiuso $E[\_]$.
+  \end{itemize}
+\end{mylem}
+
+\begin{mypro}
+  L'equivalenza osservazionale coincide con quella statica sui frame,
+  ma \`e pi\`u restrittiva sui processi:
+  \begin{itemize}
+  \item $\varphi \approx \psi \Leftrightarrow \varphi \approx _s \psi$
+  \item $A \approx B \Rightarrow A \approx _s B$ cio\`e $\approx
+    \subset \approx _s$.
+  \end{itemize}
+\end{mypro}
+
+Se $A \approx B$ allora $A|C$ ha gli stessi barb di $B|C$ per ogni $C$
+tale che $fv(C) \subseteq dom(A)$. Allora per testare l'equivalenza
+statica ci basta considerare i $C$ nella forma $if\ M=N\ then\ \bar
+a\ang{n}$ dove $a$ non appartiene a $A$ o $B$.
+
+\subsection{Labelled equivalence}
+
+Aggiungiamo alla semantica $\rightarrow$ dei label ($A
+\xrightarrow{\alpha} A'$) del tipo:
+\begin{itemize}
+\item $N(M)$: un input di $M$ nel canale $N$
+\item $\nu x. \bar N \ang{x}$ dove $x$ \`e una variabile che non
+  occorre in $N$: un output di $x$ sul canale $N$.
+\end{itemize}
+
+Nel secondo caso la variabile $x$ \`e legata al label, quindi
+definiamo anche $bv(\alpha)$ nel modo ovvio. Le $fv$ sono le unioni
+delle $fv$ di $M$ e $N$.
+
+Aggiungiamo 5 regole di semantica (vedi articolo).
+
+\begin{mydef}[Bisimulazione etichettata]
+  Una labelled bisimulation \`e una relazione simmetrica $\mathcal{R}$
+  sui processi estesi chiusi tale che $A \mathcal{R} B$ implica:
+  \begin{enumerate}
+  \item $A \approx _s B$;
+  \item se $A \rightarrow A'$ con $A'$ chiuso, allora $B \rightarrow
+    ^* B'$ e $A' \mathcal{R} B'$ per un qualche $B'$;
+  \item se $A \xrightarrow{\alpha} A'$ con $A'$ chiuso e $fv(\alpha)
+    \subseteq dom(\alpha)$ allora $B\rightarrow ^*
+    \xrightarrow{\alpha} \rightarrow ^* B'$ e $A' \mathcal{R} B'$ per
+    un qualche $B'$.
+  \end{enumerate}
+  Una labelled bisimilarity $\approx _l$ \`e la pi\`u grande labelled
+  bisimulation.
+\end{mydef}
+
+\begin{myteo}
+  L'equivalenza osservazionale \`e l'equivalenza etichettata: $\approx
+  = \approx _l$.
+\end{myteo}
+% \begin{myoss}
+%   Il teorema vale nell'ipotesi che le variabili esportate non siano di
+%   tipo Channel.
+% \end{myoss}
+% \begin{myes}
+%   I processi $\nu a.\pa{ \set{ \sfrac{a}{x}}}$ e $\nu
+%   a. \pa{\set{\sfrac{a}{x}} | \bar a\ang{N}}$ non sono
+%   osservazionalmente equivalenti ma lo sono nella semantica
+%   etichettata.
+% \end{myes}
+
+\begin{mylem}{Alias elimination}
+  Siano $A,B$ processi estesi chiusi, sia $M$ un termine tale che
+  $fv(M) \subseteq dom(A)$ e $x$ una variabile tale che $x \not\in
+  dom(A)$. Allora
+  \[ A \approx _l B \Leftrightarrow \set{\sfrac{M}{x}}|A \approx _l
+    \set{\sfrac{M}{x}}|B \]
+\end{mylem}
+
+\begin{mylem}[Name disclosure]
+  Siano $A.B$ processi estesi chiusi e $x$ una variabile tale che $x
+  \not\in dom(A)$. Allora
+  \[ \nu n. \pa{ \set{\sfrac{n}{x}}|A} \approx _l \nu n. \pa{
+      \set{\sfrac{n}{x}}|B } \]  
+\end{mylem}
+
+Possiamo anche rendere pi\`u espliciti di label, ad esempio creando
+label del tipo $\nu y.\bar a \ang{ \pa{\text{Header},y}}$
+
+\begin{mydef}
+  Le variabili $\tilde x$ si risolvoo a $\tilde M$ in $A$ se e solo se
+  \[ A \equiv \set{\sfrac{\tilde M}{\tilde x}} | \nu \tilde x.A \]
+\end{mydef}
+
+In generale dato un processo $A$ e delle variabili $\tilde x \in
+dom(A)$ esistono $\tilde n, \tilde M, A'$ tali che possiamo scrivere
+\[ A \equiv \nu \tilde n. \pa{ \set{\sfrac{\tilde M}{\tilde x}}
+    |A'} \]
+se le variabili $\tilde x$ risolvono a $\tilde M$ in $A$ allora
+$\tilde n$ pu\`o essere scelto vuoto, cio\`e non abbiamo restrizioni
+sui termini di $\tilde M$.
+
+\begin{mylem}
+  Le seguenti propriet\`a sono equivalenti
+  \begin{enumerate}
+  \item le variabili $\tilde x$ risolvono a $\tilde M$ in $A$;
+  \item esiste un $A'$ tale che $A \equiv \set{\sfrac{\tilde M}{\tilde
+        x}} |A'$;
+  \item $\pa{\tilde x = \tilde M}\varphi (A)$ e la sostituzione
+    $\set{\sfrac{\tilde M}{\tilde x}}$ \`e aciclica.
+  \end{enumerate}
+\end{mylem}
+
+\begin{mylem}
+  Se $A \approx _s B$ e $\tilde x$ risolve a $\tilde M$ in $A$ allora
+  $\tilde x$ risolve a $\tilde M$ in $B$.
+\end{mylem}
+
+Usando questo concetto possiamo definire altre regole di sementica
+etichettata e definire una nuova relazione di equivalenza $\approx _L$
+che si dimostra coincidere con $\approx _l$.
+
+
+
+\end{document}
+
