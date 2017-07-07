@@ -301,11 +301,54 @@
   \end{align*}
 \end{frame}
 
-
-\begin{frame}{Bisumulazione}
-  
+\begin{frame}{Semantica}
+  ???
 \end{frame}
 
+
+\begin{frame}{Barbigli}
+  Diciamo che un processo $P$ esibisce un barbiglio sul nome
+  $\beta \in \set{m,\bar m}$ se il processo comunica su quel nome in
+  modo pubblico, cioè
+  \begin{align*}
+    m(x).P \downarrow m & & \bar m \ang{M}.P \downarrow \bar m 
+  \end{align*}
+  \begin{align*}
+    \frac{P\downarrow \beta}{ P|Q \downarrow \beta} & &
+                                                        \frac{P\downarrow
+                                                        \beta\; \beta
+                                                      \not\in \set{m,
+                                                      \bar m}}{ \nu
+                                                      m. P \downarrow
+                                                      \beta} & & \frac{
+                                                               P
+                                                               \equiv
+                                                               Q \;\; Q
+                                                               \downarrow
+                                                               \beta}
+                                                               {
+                                                               P\downarrow
+                                                               \beta}
+  \end{align*}
+  \begin{align*}
+    \frac{P\downarrow \beta}{P\Downarrow \beta} & & \frac{P\rightarrow
+                                                    Q\;\; Q \Downarrow
+                                                    \beta }{P
+                                                    \Downarrow \beta}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Test}
+  Un test è dato da un barbaglio $\beta$ e un processo chiuso
+  $R$. Diciamo che un processo chiuso $P$ passa il test se $(P|R)
+  \Downarrow \beta$.
+  \vfill
+
+  Diciamo che $P \sqsubseteq Q$ se  $\forall (R,\beta)\;\; (P|R)\Downarrow \beta \Rightarrow
+  (Q|R)\Downarrow \beta$.
+
+  Diciamo che $P \simeq Q$ se $P \sqsubseteq Q$ e $Q \sqsubseteq P$.
+\end{frame}
 
 \section{Applied $\pi$ calculus}
 
