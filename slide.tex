@@ -6,7 +6,7 @@
 
 %\usepackage[utf8]{inputenc}
 %\usepackage{default}
-%\usepackage[italian]{babel}
+\usepackage[italian]{babel}
 
 %\usepackage{titleref}
 %\usepackage{zref-titleref}
@@ -17,7 +17,7 @@
 \usepackage{colonequals}
 \usepackage{mathtools}
 \usepackage{xfrac}
-\usepackage[all]{xy}
+%\usepackage[all]{xy}
 \usepackage{mathtools}
 \usepackage{graphicx}
 %\usepackage{fullpage}
@@ -168,7 +168,7 @@
           & P | Q & \text{parallel composition} \\
           & !P & \text{replication} \\
           & \nu n.P & \text{name restriction (new)} \\
-          & if\ M=N\ then\ P\ else\ Q & \text{conditional} \\
+          & if\ M=N\ then\ P & \text{conditional} \\
           & N(x).P & \text{message input} \\
           & \obar{N}\left< M\right> .P & \text{message output} \\
           & let\ (x,y) = M\ in\ P & \text{pair splitting} \\
@@ -306,8 +306,8 @@
 \end{frame}
 
 
-\begin{frame}{Barbigli}
-  Diciamo che un processo $P$ esibisce un barbiglio sul nome
+\begin{frame}{\textit{Barb}}
+  Diciamo che un processo $P$ esibisce un \textit{barb} sul nome
   $\beta \in \set{m,\bar m}$ se il processo comunica su quel nome in
   modo pubblico, cioè
   \begin{align*}
@@ -339,7 +339,7 @@
 \end{frame}
 
 \begin{frame}{Test}
-  Un test è dato da un barbaglio $\beta$ e un processo chiuso
+  Un test è dato da un \textit{barb} $\beta$ e un processo chiuso
   $R$. Diciamo che un processo chiuso $P$ passa il test se $(P|R)
   \Downarrow \beta$.
   \vfill
@@ -355,74 +355,425 @@
 \subsection{Sintassi}
 
 \begin{frame}{Termini}
-  
+  Sia $\Sigma$ una signature di simboli di funzione.  
+  \begin{align*}
+    L,M,N.T,U,V & \coloncolonequals & \text{terms} \\
+                & a,b,c,\dots,k,\dots,m,n,\dots,s & \text{name} \\
+                & x,y,z & \text{variable} \\
+                & f(M_1,\dots,M_l), f\in \Sigma & \text{function application}
+  \end{align*}
+  con $l$ opportuno.
+
+  Avremo anche una teoria che ci permetter\`a di scrivere:
+  \begin{align*}
+    \Sigma \vdash M = N & & \Sigma \vdash M \neq N
+  \end{align*}
 \end{frame}
 
 \begin{frame}{Processi}
-  
+  \begin{align*}
+  P,Q,R & \coloncolonequals & \text{plain processes} \\
+  & \mathbf{0} & \text{null process} \\
+  & P | Q & \text{parallel composition} \\
+  & !P & \text{replication} \\
+  & \nu n.P & \text{name restriction (new)} \\
+  & if\ M=N\ then\ P\ else\ Q & \text{conditional} \\
+  & N(x).P & \text{message input} \\
+  & \obar{N}\left< M\right> .P & \text{message output}
+\end{align*}
+
 \end{frame}
 
 \begin{frame}{Processi estesi}
+  \begin{align*}
+    A,B,C & \coloncolonequals & \text{extended processes} \\
+          & P & \text{palin process} \\
+          & A | B & \text{parallel composition} \\
+          & \nu n.A & \text{name restriction} \\
+          & \nu x.A & \text{variable restriction} \\
+          & \left\{ \sfrac{M}{x} \right\} & \text{active substitution}
+  \end{align*}
   
+  La sostituzione $\left\{ \sfrac{M}{x} \right\}$ \`e pu\`o agire in
+  tutti i contesti con cui viene a contatto, per controllare questa cosa
+  possiamo mettere una restrizione sulla variabile $\nu x.\left( \left\{
+      \sfrac{M}{x} \right\} | P\right)$.
 \end{frame}
 
 \begin{frame}{Frame}
-  
+  \begin{mydef}[Frame]
+    Un processo esteso costituito solo da estnesioni attive, cio\`e
+    \[ \sigma = \set{ \sfrac{\tilde M}{\tilde x}} = \set{
+        \sfrac{M_1}{x_1}, \dots \sfrac{M_l}{x_l}} = \set{
+        \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}}\]
+  \end{mydef}
+  \vfill
+
+  Dato un processo esteso $A$ posso rimuovere tutto ci\`o che non \`e
+  una sostituzione attiva ottenendo il \textbf{comportamento statico}
+  $\varphi(A)$.
 \end{frame}
 
-\begin{frame}{fv,bv e dom}
+\begin{frame}{Free variables e free names}
+  \begin{align*}
+    fv(x) & \eqdef \set{x} & fn(x) & \eqdef \emptyset \\
+    fv(n) & \eqdef \emptyset &  fn(n) & \eqdef \set{n} \\
+    fv\pa{f\pa{ M_1, \dots }} & \eqdef fv\pa{M_1} \cup \cdots  & fn(f(...)) & \eqdef ... \\
+          & \vdots & &\vdots  \\
+    fv(N(x).P) & \eqdef fv(N) \cup \pa{fv(P) \setminus \set{x}} &   fn(N(x).P) & \eqdef fn(N) \cup fn(P) \\
+          & \vdots & & \vdots \\
+    fv(\nu x.A) & \eqdef fv(A) \setminus \set{x} &   fn(\nu n.P) & \eqdef fn(P)\setminus \set{n} \\
+    fv\pa{ \set{ \sfrac{M}{x} } } & \eqdef fv(M) \cup \set{x} & fn\pa{ \set{ \sfrac{M}{x} } } & \eqdef fn(M) \\
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Dominio di un processo esteso}
+  \begin{align*}
+    dom(P) & \eqdef \emptyset \\
+    dom(A|B) & \eqdef dom(A) \cup dom(B) \\
+    dom(\nu n.A) & \eqdef dom(A) \\
+    dom(\nu x.A) & \eqdef dom(A) \setminus \set{x}\\
+    dom\pa{ \set{ \sfrac{M}{x}}} & \eqdef \set{x}           
+  \end{align*}
+  \vfill
   
+  Diciamo che un processo esteso $A$ \`e chiuso se $fv(A) = dom(A)$.
 \end{frame}
 
 \subsection{Semantica}
 
+\begin{frame}{Contesto di valutazione}
+  Un contesto $E[\_]$ \`e un'espressione con un buco.
+  \begin{mydef}[Contesto di valutazione]
+    Un contesto di valutazione \`e un contesto il cui argomento non
+    \`e sottoposto a replicazione, condizionale, input o output.
+  \end{mydef}
+  \begin{mydef}[Contesto chiuso]
+    Il contesto $E[\_]$ chiude $A$ se $E[A]$ \`e chiuso.
+  \end{mydef}
+\end{frame}
+
+
 \begin{frame}{Equivalenza struttruale}
-  $\equiv$
+  \begin{align*}
+    A & \equiv A|\mathbf{0} & A|(B|C) & \equiv (A|B)|C \\
+    A|B & \equiv B|A & !P & \equiv P|!P \\ \\
+    \nu n.\mathbf{0} & \equiv 0 & \nu u. \nu v.A & \equiv \nu v. \nu
+                                                   u.A \\
+    A| \nu u.B & \equiv \nu u. (A|B) & \text{when } & u\not\in fv(A)
+                                                     \cup fn(A) \\ \\
+    \nu x. \set{\sfrac{M}{x}} & \equiv \mathbf{0} & \set{\sfrac{M}{x}}
+                                                    |A & \equiv
+                                                         \set{\sfrac{M}{x}}
+                                                         |
+                                                         A\set{\sfrac{M}{x}}
+    \\
+    \set{\sfrac{M}{x}} & \equiv \set{\sfrac{N}{x}} & \text{when } &
+                                                                   \Sigma
+                                                                   \vdash M=N
+  \end{align*}
 \end{frame}
 
-\begin{frame}{Semantica}
+\begin{frame}
+  Usando l'equivalenza strutturale possiamo riscrivere ogni processo
+  esteso chiuso come:
+  \[ A \equiv \nu \tilde n. \pa{ \set{\sfrac{\tilde M}{\tilde x}} | P
+    } \]
+  dove $P$ \`e un processo, $fv(P)\ = \emptyset$, $fv(\tilde M) =
+  \emptyset$ e $\set{\tilde n} \subseteq fn(\tilde M)$.
+  % TODO: forse fv(P) = \set{\tilde x}.
+  \vfill
+
+  Per ogni frame $\varphi$ chiuso:
+  \[ \varphi \equiv \nu \tilde n. \set{\sfrac{\tilde M}{\tilde x}} \]
+\end{frame}
+
+\begin{frame}{Internal reduction}
+  Consideriamo la pi\`u piccola relazione sui processi estesi chiusa
+  per equivalenza strutturale e applicazione di contesti di
+  valutazione tale che:
+  \begin{align*}
+    \obar{N}\ang{x}.P|N(x).Q & \rightarrow P|Q \\
+    if\ M=M\ then\ P\ else\ Q & \rightarrow P \\
+    if\ M=N\ then\ P\ else\ Q & \rightarrow Q \\
+  \end{align*}
+  \vfill
+  Ad esempio se $x \not\in fv(N)\cup fv(M)\cup fv(P)$:
+  \begin{align*}
+    \obar{N}\ang{M}.P | N(x).Q & \equiv \nu x.\pa{ \set{\sfrac{M}{x}}
+                                 | \obar{N} \ang{x}.P | N(x).Q } \\
+    & \rightarrow \nu x.\pa{\set{\sfrac{M}{x}}|P|Q} \\
+    & \equiv P|Q\set{\sfrac{M}{x}}
+  \end{align*}
+\end{frame}
+
+\subsection{Esempi}
+
+\begin{frame}{Interi e coppie}
+  \begin{align*}
+    \mathrm{zero} &: \mathrm{Data} \\
+    \mathrm{suc} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
+    \mathrm{prev} &: \mathrm{Data} \rightarrow \mathrm{Data}
+  \end{align*}
+  Con assiomi: \( \mathrm{prev} \pa{ \mathrm{suc} (x) } = x, \dots \)
+  \vfill
   
+  \begin{align*}
+    \mathrm{pair} &: \mathrm{Data} \times \mathrm{Data} \rightarrow
+                    \mathrm{Data} \\
+    \mathrm{fst} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
+    \mathrm{snd} &: \mathrm{Data} \rightarrow \mathrm{Data}
+  \end{align*}
+  Con $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x, \mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$ 
 \end{frame}
 
+\begin{frame}{Funzioni hash}
+  Una funzione hash \`e una funzione $\mathrm{h}: \mathrm{Data}
+  \rightarrow \mathrm{Data}$ senza equazioni.
+  
+  \[ \nu k.\pa{ \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(s,M)}}} | a(x).if\
+      \mathrm{h}\pa{(s,\mathrm{fst}(x))} = \mathrm{snd}(x)\ then\
+      \obar{b}\ang{\mathrm{fst}(x)}} \]
+\end{frame}
+
+\begin{frame}{Cifratura simmetrica}
+  Abbiamo due funzioni
+  \begin{align*}
+    \mathrm{enc} &: \mathrm{Data} \times \mathrm{Data} \rightarrow
+                   \mathrm{Data} \\
+    \mathrm{dec} &: \mathrm{Data} \times \mathrm{Data} \rightarrow
+                   \mathrm{Data} \\
+  \end{align*}
+  tali che $\mathrm{dec}\pa{\mathrm{enc}(x,y),y} = x$ dove $x$
+  rappresenta il testo in chiaro e $y$ la chiave.
+  \vfill
+  
+  \[ \nu k. \pa{ \obar{a}\ang{\mathrm{enc}(M,k)} | a\pa{x}.if\
+      \mathrm{enc}\pa{ \mathrm{dec}(x,k)} = x\ then\
+      \obar{b}\ang{\mathrm{dec}(x,k)}} \]
+\end{frame}
+
+\begin{frame}{Cifratura asimmetrica}
+  Usiamo quattro funzioni $\mathrm{enc}$, $\mathrm{dec}$,
+  $\mathrm{pk}$ e $\mathrm{sk}$ tali che
+  \[ \mathrm{dec}\pa{\mathrm{enc}\pa{x,\mathrm{pk}(y)},\mathrm{sk}(y)}
+    = x \]
+  Potremmo chiedere altre propriet\`a, ad esempio:
+  \[ \mathrm{dec}\pa{\mathrm{enc}(x,y),z} =
+    \mathrm{enc}\pa{\mathrm{dec}(x,y),y} \]
+  \vfill
+
+  \begin{align*}
+    A &= \nu s.\pa{ \obar{a}\ang{\mathrm{pk}(s)}|
+    b(x).\obar{c}\ang{\mathrm{dec}\pa{ x,sk(s) } } } \\
+    B &= a(y).\obar{b}\ang{\mathrm{enc}(M,y)} \\
+    C &= A|B   
+  \end{align*}
+\end{frame}
 
 \section{Equivalenze}
 
 \subsection{Osservazionale}
 
 \begin{frame}{Definizione}
-  
+  Scriviamo $A \Downarrow a$ quando $A$ pu\`o inviare un messaggio sul
+  nome $a$, cio\`e esiste $E$ contesto di valutazione che non lega $a$
+  tale che:
+  \[ A \rightarrow ^* E\bra{ \obar{a}\ang{M}.P} \]
+
+  \begin{mydef}[Equivalenza osservazionale]
+    Una bisimulazione osservazionale \`e una relazione simmetrica
+    $\mathcal{R}$ tra processi estesi chiusi sullo stesso dominio tale
+    che $A \mathcal{R} B$ implica:
+    \begin{enumerate}
+    \item $A \Downarrow a \Rightarrow B \Downarrow a$;
+    \item se $A \rightarrow ^* A'$ con $A'$ chiuso allora $\exists B'$
+      t.c. $B \rightarrow ^* B'$ e $A' \mathcal{R} B'$;
+    \item $\forall E[\_]$ contesto di valutazione chiuso $E[A]
+      \mathcal{R} E[B]$.
+    \end{enumerate}
+    Chiamiamo \textbf{equivalenza osservazionale} ($\approx$) la pi\`u
+    grande bisimulazione osservazionale.
+  \end{mydef}
 \end{frame}
 
 \begin{frame}{Esempio}
-  
+  Se $h$ \`e una funzione senza equazioni (ad esempio una funzione
+  hash) allora
+  \[ \nu s. \obar{a}\ang{s} \approx \nu s. \obar{a}\ang{h(s)} \]
 \end{frame}
 
 \subsection{Statica}
 
+\begin{frame}
+  Ci concentriamo sui frame, abbiamo gi\`a visto che ad ogni processo
+  esteso $A$ possiamo associare il suo frame $\varphi (A)$.
+  \vfill
+  
+  Siano $f$, $g$ due funzioni senza equazioni:
+  \begin{align*}
+    \varphi _0 &= \nu k.\set{\sfrac{k}{x}} | \nu s. \set{\sfrac{s}{y}}
+    \\
+    \varphi _1 &= \nu k.\set{ \sfrac{f(k)}{x}, \sfrac{g(k)}{y}} \\
+    \varphi _2 &= \nu k.\set{ \sfrac{k}{x}, \sfrac{f(k)}{y}} 
+  \end{align*}
+  Un contesto non pu\`o distinguere fra $\varphi _0$ e $\varphi _1$,
+  mentre $\varphi _2$ pu\`o essere distinto dagl'altri testando il
+  predicato $f(x) = y$.
+  \[ \varphi _0 \approx _s \varphi _1 \not \approx _s \varphi _2 \]
+\end{frame}
+
+\begin{frame}
+  \begin{mydef}[Uguaglianza di termini in un frame]
+    $(M=N)\varphi$ se e solo se esistono $\tilde n$ e $\sigma$ tali che:
+    \begin{itemize}
+    \item $fv(M) \cup fv(N) \subseteq dom(\varphi)$
+    \item $\varphi \equiv \nu \tilde n.\sigma$
+    \item $M\sigma = N\sigma$
+    \item $\set{\tilde n} \cap( fn(M) \cup fn(N)) = \emptyset$
+    \end{itemize}
+  \end{mydef}
+  \vfill
+  
+  Nei frame precedenti:
+  \begin{align*}
+    (f(x) \neq y)\varphi _0 && (f(x) \neq y)\varphi _1 && (f(x) =
+                                                        y)\varphi _2
+  \end{align*}
+\end{frame}
+
 \begin{frame}{Definizione}
-  
+  \begin{mydef}[Equivalenza di frame]
+    Due frame chiusi $\varphi, \psi$ sono staticamente equivalenti
+    ($\varphi \approx _s \psi$) se
+    \begin{itemize}
+    \item $dom(\varphi) = dom(\psi)$
+    \item $\forall M,N\; (M=N)\varphi \Leftrightarrow (M=N)\psi$
+    \end{itemize}
+  \end{mydef}
+
+  \begin{mydef}[Equivalenza di processi estesi]
+    Due processi estesi chiusi $A,B$ sono staticamente equivalente
+    ($A \approx_s B$) se e solo se i loro frame sono staticamente
+    equivalenti:
+    \[ A \approx _s B \Leftrightarrow \varphi(A) \approx _s \varphi(B) \]
+  \end{mydef}
 \end{frame}
 
-\begin{frame}{Esempio}
+\begin{frame}
+  \begin{mylem}
+    Siano $A$, $B$ processi estesi chiusi.
+    \begin{itemize}
+    \item se $A \equiv B$ o $A \rightarrow B$ allora $A \approx _s B$;
+    \item se $A \approx _s B$ allora per ogni contesto di valutazione
+      chiuso $E[\_]$ si ha $E[A] \approx _s E[B]$.
+    \end{itemize}
+  \end{mylem}
+  \vfill
   
+  \begin{mylem}
+    L'equivalenza osservazionale coincide con l'equivalenza statica
+    sui frame
+    \[ \varphi \approx \psi \Leftrightarrow \varphi \approx _s \psi \]
+  \end{mylem}
+  \[ (M=N)\varphi \Leftrightarrow \pa{ \varphi | if\ N=M\ then\
+      \obar{a}\ang{n}} \Downarrow a \]
 \end{frame}
+\begin{frame}{Relazione con l'equivalenza osservazionale}
+  \begin{mypro}
+    L'equivalenza osservazionale \`e strettamente pi\`u fine
+    dell'equivalenza statica $\approx \subset \approx _s$
+    \[ A \approx B \Rightarrow A \approx _s B \]
+  \end{mypro}
+  \vfill
 
-\begin{frame}{Relazione con la osservazionale}
-  
+  \begin{align*}
+    A &= \obar{a}\ang{n} & A &\not\approx B \\
+    B &= \obar{b}\ang{n} & A &\approx _s B 
+  \end{align*}
 \end{frame}
 
 \subsection{Etichettata}
 
 \begin{frame}{Semantica etichettata}
+  Oltre alla riduzione $\rightarrow$ aggiungiamo una nuova relazione
+  $\xrightarrow{\alpha}$ dove $\alpha$ pu\`o essere:
+  \begin{itemize}
+  \item $N(M)$: l'input di $M$ sul canale $N$;
+  \item $\nu x.\obar{N}\ang{x}$ (con $x\not\in fv(N)$): l'output di
+    $x$ su $N$.
+  \end{itemize}
   
+  Le principali regole sono:
+  \begin{itemize}
+  \item In: \( N(x).P \xrightarrow{N(M)} P\set{\sfrac{M}{x}} \)
+  \item Out-Var \( \displaystyle \frac{x\not\in
+      fv\pa{\obar{N}\ang{M}.P}}{\obar{N}\ang{M}.P \xrightarrow{\nu
+        x.\obar{N}\ang{x}} P|\set{\sfrac{M}{x}}} \)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  Abbiamo altre regole per gestire lo scoping:
+  \[ \frac{A \xrightarrow{\alpha} A'\; u\not\in\alpha}{\nu u.A
+      \xrightarrow{\alpha} \nu u.A'} \]
+  il parallelismo:
+  \[ \frac{A \xrightarrow{\alpha} A'\;bv(\alpha) \cap fv(B) =
+      \emptyset}{A|B \xrightarrow{\alpha} A'|B} \]
+  e l'equivalenza strutturale:
+  \[ \frac{A \equiv B\;\; B\xrightarrow{\alpha} B'\;\; B' \equiv A'}{A
+      \xrightarrow{\alpha} A'} \]
+\end{frame}
+
+\begin{frame}{Esempio}
+  \begin{align*}
+    & \nu k. \obar{a} \ang{\mathrm{enc}(M,k)}.\obar{a}\ang{k}.a(z).if\
+      z=M\ then\ \obar{c}\ang{n} \\
+    \xrightarrow{\nu x.\obar{a}\ang{x}} & \nu
+                                          k.\pa{\set{\sfrac{\mathrm{enc}(M,k)}{x}}|
+                                          \obar{a}\ang{k}. a(z).if\
+                                          z=M\ then\ \obar{c}\ang{n}}
+    \\
+    \xrightarrow{\nu y.\obar{a}\ang{y}} & \nu k. \pa{
+                                          \set{\sfrac{\mathrm{enc}(M,k)}{x}}
+                                          | \set{\sfrac{k}{y}} |
+                                          a(z).if\ z=M\ then\
+                                          \obar{c}\ang{n}} \\
+    \xrightarrow{a\pa{\mathrm{dec}(x,y)}} & \nu k. \pa{
+                                            \set{\sfrac{\mathrm{enc}(M,k)}{x}}
+                                            | \set{\sfrac{k}{y}} | if\
+                                            \mathrm{dec(x,y)}=M\ then\
+                                            \obar{c}\ang{n}} \\
+    \rightarrow & \nu k. \pa{ \set{\sfrac{\mathrm{enc}(M,k)}{x}} |
+                  \set{\sfrac{k}{y}} | \obar{c}\ang{n}} 
+  \end{align*}
 \end{frame}
 
 \begin{frame}{Definizione}
-  
+  \begin{mydef}[Equivalenza etichettata]
+    Una \textbf{bisimulazione etichettata} \`e una relazione
+    simmetrica $\mathcal{R}$ sui processi estesi chiusi tale che $A
+    \mathcal{R} B$ implica:
+    \begin{enumerate}
+    \item $A \approx _s B$;
+    \item se $A \rightarrow A'$ con $A'$ chiuso allora esiste $B'$
+      chiuso tale che $B \rightarrow ^* B'$ e $A' \mathcal{R} B'$;
+    \item se $A \xrightarrow{\alpha} A'$ con $A'$ chiuso e
+      $fv(\alpha) \subseteq dom(A)$ allora esiste $B'$ tale che
+      $B \rightarrow ^* \xrightarrow{\alpha} \rightarrow ^* B'$ e
+      $A' \mathcal{R} B'$.
+    \end{enumerate}
+    L'\textbf{equivalenza etichettata} (o bisimilarit\`a etichettata)
+    $\approx _l$ \`e la pi\`u grande bisimulazione etichettata.
+  \end{mydef}
 \end{frame}
 
-\begin{frame}{Equivalenza con l'osservazionale}
-  
+\begin{frame}{Relazione con l'equivalenza osservazionale}
+  \begin{myteo}
+    L'equivalenza osservazionale \`e l'equivalenza etichettata
+    \[ \approx = \approx _l \]
+  \end{myteo}
 \end{frame}
 
 \section{Esempi}
