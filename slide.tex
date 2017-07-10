@@ -344,6 +344,7 @@
   \Downarrow \beta$.
   \vfill
 
+  %TODO: mydef?
   Diciamo che $P \sqsubseteq Q$ se  $\forall (R,\beta)\;\; (P|R)\Downarrow \beta \Rightarrow
   (Q|R)\Downarrow \beta$.
 
@@ -357,7 +358,7 @@
 \begin{frame}{Termini}
   Sia $\Sigma$ una signature di simboli di funzione.  
   \begin{align*}
-    L,M,N.T,U,V & \coloncolonequals & \text{terms} \\
+    L,M,N,T,U,V & \coloncolonequals & \text{terms} \\
                 & a,b,c,\dots,k,\dots,m,n,\dots,s & \text{name} \\
                 & x,y,z & \text{variable} \\
                 & f(M_1,\dots,M_l), f\in \Sigma & \text{function application}
@@ -454,7 +455,7 @@
 \end{frame}
 
 
-\begin{frame}{Equivalenza struttruale}
+\begin{frame}{Equivalenza strutturale}
   \begin{align*}
     A & \equiv A|\mathbf{0} & A|(B|C) & \equiv (A|B)|C \\
     A|B & \equiv B|A & !P & \equiv P|!P \\ \\
@@ -498,6 +499,7 @@
     if\ M=N\ then\ P\ else\ Q & \rightarrow Q \\
   \end{align*}
   \vfill
+  \pause 
   Ad esempio se $x \not\in fv(N)\cup fv(M)\cup fv(P)$:
   \begin{align*}
     \obar{N}\ang{M}.P | N(x).Q & \equiv \nu x.\pa{ \set{\sfrac{M}{x}}
@@ -565,7 +567,7 @@
 
   \begin{align*}
     A &= \nu s.\pa{ \obar{a}\ang{\mathrm{pk}(s)}|
-    b(x).\obar{c}\ang{\mathrm{dec}\pa{ x,sk(s) } } } \\
+    b(x).\obar{c}\ang{\mathrm{dec}\pa{ x,\mathrm{sk}(s) } } } \\
     B &= a(y).\obar{b}\ang{\mathrm{enc}(M,y)} \\
     C &= A|B   
   \end{align*}
@@ -627,10 +629,10 @@
   \begin{mydef}[Uguaglianza di termini in un frame]
     $(M=N)\varphi$ se e solo se esistono $\tilde n$ e $\sigma$ tali che:
     \begin{itemize}
-    \item $fv(M) \cup fv(N) \subseteq dom(\varphi)$
-    \item $\varphi \equiv \nu \tilde n.\sigma$
-    \item $M\sigma = N\sigma$
-    \item $\set{\tilde n} \cap( fn(M) \cup fn(N)) = \emptyset$
+    \item $fv(M) \cup fv(N) \subseteq dom(\varphi)$;
+    \item $\varphi \equiv \nu \tilde n.\sigma$;
+    \item $\set{\tilde n} \cap( fn(M) \cup fn(N)) = \emptyset$;
+    \item $M\sigma = N\sigma$.
     \end{itemize}
   \end{mydef}
   \vfill
@@ -771,7 +773,7 @@
 
 \begin{frame}{Relazione con l'equivalenza osservazionale}
   \begin{myteo}
-    L'equivalenza osservazionale \`e l'equivalenza etichettata
+    L'equivalenza osservazionale coincide l'equivalenza etichettata
     \[ \approx = \approx _l \]
   \end{myteo}
 \end{frame}
