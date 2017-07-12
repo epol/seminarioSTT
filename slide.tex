@@ -146,7 +146,7 @@
 
 \begin{frame}
   \frametitle{Sintassi}
-  Costruiamo un $\pi$ calcolo che supporti interi e coppie, ma non
+  Costruiamo un $\pi$ calcolo che supporti le coppie, ma non
   supportiamo la scelta non deterministica ($P+Q$).
 
   I termini sono:
@@ -154,9 +154,7 @@
     L,M,N,T,U,V & \coloncolonequals & \text{terms} \\
                 & a,b,c,\dots,k,\dots,m,n,\dots,s & \text{name} \\
                 & x,y,z & \text{variable} \\
-                & (M,N) & \text{pair} \\
-                & 0 & \text{zero} \\
-                & suc(M) & \text{successor}
+                & (M,N) & \text{pair}
   \end{align*}
 \end{frame}
 
@@ -171,8 +169,7 @@
           & if\ M=N\ then\ P & \text{conditional} \\
           & N(x).P & \text{message input} \\
           & \obar{N}\left< M\right> .P & \text{message output} \\
-          & let\ (x,y) = M\ in\ P & \text{pair splitting} \\
-          & case\ M\ of\ 0: P\ suc(x): Q & \text{integer case}
+          & let\ (x,y) = M\ in\ P & \text{pair splitting}
   \end{align*}
 \end{frame}
 
@@ -180,14 +177,14 @@
   Come nel CCS, possiamo restringere i nomi ad alcuni contesti, ad
   esempio nel processo:
   \begin{align*}
-  K(M) = \nu n. \pa{ \obar{n}\ang{M}.\mathbf{0} | n(x).P } & &  n\not\in
+  K(M) = \nu n. \pa{ \obar{n}\ang{M}.\mathbf{0} | n(x).P }
+    \onslide<2->{ |C }& &  n\not\in
     fv(P)
   \end{align*}
-  %TODO: far comparire un |C
 
   abbiamo che $C$ non pu\`o osservare il contenuto di $M$ se non per gli effetti
   di $P$, cioè:
-  \[ P\set{\sfrac{M}{x}} \approx P\set{\sfrac{M'}{x}} \Rightarrow K(M)
+  \[ P\bra{\sfrac{M}{x}} \approx P\bra{\sfrac{M'}{x}} \Rightarrow K(M)
     \approx K(M') \]
   
   Oltre alla riservatezza abbiamo anche l'autenticit\`a.
@@ -212,28 +209,9 @@
       
       \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
       \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
-      \draw[->] (A) -- node[below] {$c_{AB}$} (B) ;
+      \onslide<2->{\draw[->] (A) -- node[below] {$c_{AB}$} (B) ;}
     \end{tikzpicture}
   \end{center}
-\end{frame}
-
-\begin{frame}
-  \begin{align*}
-    A(M) & = \nu
-           c_{AB}. \pa{\obar{c_{AS}}\ang{c_{AB}}. \obar{c_{AB}}\ang{M}}
-    \\
-    B & = c_{SB}(x). x(y) .P \\
-    S & = c_{AS}(x) . \obar{c_{SB}} \ang{x} \\
-    Inst(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B} \\
-    B_{spec} & = c_{SB}(x). x(y). \pa{ P\set{\sfrac{M}{y}}} \\ 
-    Inst_{spec}(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B_{spec}}
-  \end{align*}
-  \begin{itemize}
-  \item \textbf{Riservatezza:} $\forall M,M'\; P\set{\sfrac{M}{y}}
-    \approx P\set{\sfrac{M'}{y}} \Rightarrow Inst(M) \approx Inst(M')$;
-  \item \textbf{Integrit\`a:} $\forall M \; Inst(M) \approx
-    Inst_{spec}(M)$.
-  \end{itemize}
 \end{frame}
 
 \begin{frame}{Limiti del $\pi$-calcolo}
@@ -242,8 +220,7 @@
   \item Segreti condivisi: $\nu k ( A|B)$;
   \item canali ristretti.
   \end{itemize}
-  I nostri termini esprimono i numeri naturali e le
-  coppie. 
+  I nostri termini esprimono le coppie. 
   \vfill
 
   Non abbiamo modi semplici di modellare, ad esempio, una
@@ -268,7 +245,7 @@
 
   Dove
   \[ \pa{ case\ \set{M}_N\; of\; \set{x}_N\ in\ P} \approx
-    P\set{\sfrac{M}{x}} \]
+    P\bra{\sfrac{M}{x}} \]
 \end{frame}
 
 \begin{frame}{Ipotesi su $\set{M}_N$}
@@ -295,11 +272,10 @@
         \obar{c_{SB}}\ang{\set{y}_{k_{SB}}} \\ 
     B & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ c_{AB}(z). case\
         z\ of\ \set{w}_y in\ P(w) \\ 
-    Inst(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B } \\
-    B_{spec} & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ 
-               c_{AB}(z). case\ z\ of\ \set{w}_y in\ P(M) \\
-    Inst_{s}(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B_{spec}}
+    Inst(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B } 
   \end{align*}
+
+  %TODO: disegno
 \end{frame}
 
 
@@ -341,11 +317,13 @@
   \Downarrow \beta$.
   \vfill
 
-  %TODO: mydef?
-  Diciamo che $P \sqsubseteq Q$ se  $\forall (R,\beta)\;\; (P|R)\Downarrow \beta \Rightarrow
-  (Q|R)\Downarrow \beta$.
+  \begin{mydef}
+    Diciamo che $P \sqsubseteq Q$ se
+    $\forall (R,\beta)\;\; (P|R)\Downarrow \beta \Rightarrow
+    (Q|R)\Downarrow \beta$.
 
-  Diciamo che $P \simeq Q$ se $P \sqsubseteq Q$ e $Q \sqsubseteq P$.
+    Diciamo che $P \simeq Q$ se $P \sqsubseteq Q$ e $Q \sqsubseteq P$.
+  \end{mydef}
 \end{frame}
 
 \section{Applied $\pi$ calculus}
@@ -400,16 +378,21 @@
 
 \begin{frame}{Frame}
   \begin{mydef}[Frame]
-    Un processo esteso costituito solo da estnesioni attive, cio\`e
-    \[ \sigma = \set{ \sfrac{\tilde M}{\tilde x}} = \set{
-        \sfrac{M_1}{x_1}, \dots \sfrac{M_l}{x_l}} = \set{
-        \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}}\]
+    Un processo esteso costituito solo da estensioni attive con
+    eventualmente dei nomi ristretti.
   \end{mydef}
+  \[ \nu \tilde n = \nu n_1. \dots \nu n_k \]
+  \[ \sigma = \set{ \sfrac{\tilde M}{\tilde x}} = \set{
+      \sfrac{M_1}{x_1}, \dots \sfrac{M_l}{x_l}} = \set{
+      \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}} \]
+  \[ \varphi = \nu n_1.\nu n_2.\dots \nu n_k . \pa{ \set{
+        \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}}} = \nu
+    \tilde n. \sigma \]
   \vfill
 
   Dato un processo esteso $A$ posso rimuovere tutto ci\`o che non \`e
-  una sostituzione attiva ottenendo il \textbf{comportamento statico}
-  $\varphi(A)$.
+  una sostituzione attiva o un nome ristretto ottenendo il
+  \textbf{comportamento statico} $\varphi(A)$.
 \end{frame}
 
 \begin{frame}{Free variables e free names}
@@ -464,7 +447,7 @@
                                                     |A & \equiv
                                                          \set{\sfrac{M}{x}}
                                                          |
-                                                         A\set{\sfrac{M}{x}}
+                                                         A\bra{\sfrac{M}{x}}
     \\
     \set{\sfrac{M}{x}} & \equiv \set{\sfrac{N}{x}} & \text{when } &
                                                                    \Sigma
@@ -502,20 +485,20 @@
     \obar{N}\ang{M}.P | N(x).Q & \equiv \nu x.\pa{ \set{\sfrac{M}{x}}
                                  | \obar{N} \ang{x}.P | N(x).Q } \\
     & \rightarrow \nu x.\pa{\set{\sfrac{M}{x}}|P|Q} \\
-    & \equiv P|Q\set{\sfrac{M}{x}}
+    & \equiv P|Q\bra{\sfrac{M}{x}}
   \end{align*}
 \end{frame}
 
 \subsection{Esempi}
 
-\begin{frame}{Interi e coppie}
-  \begin{align*}
-    \mathrm{zero} &: \mathrm{Data} \\
-    \mathrm{suc} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
-    \mathrm{prev} &: \mathrm{Data} \rightarrow \mathrm{Data}
-  \end{align*}
-  Con assiomi: \( \mathrm{prev} \pa{ \mathrm{suc} (x) } = x, \dots \)
-  \vfill
+\begin{frame}{Coppie}
+  % \begin{align*}
+  %   \mathrm{zero} &: \mathrm{Data} \\
+  %   \mathrm{suc} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
+  %   \mathrm{prev} &: \mathrm{Data} \rightarrow \mathrm{Data}
+  % \end{align*}
+  % Con assiomi: \( \mathrm{prev} \pa{ \mathrm{suc} (x) } = x, \dots \)
+  % \vfill
   
   \begin{align*}
     \mathrm{pair} &: \mathrm{Data} \times \mathrm{Data} \rightarrow
@@ -523,17 +506,24 @@
     \mathrm{fst} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
     \mathrm{snd} &: \mathrm{Data} \rightarrow \mathrm{Data}
   \end{align*}
-  Con $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x, \mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$.
+  Con:
+  \begin{itemize}
+  \item $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x$,
+  \item $\mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$.
+  \end{itemize}
+
 \end{frame}
 
 \begin{frame}{Funzioni hash}
   Una funzione hash \`e una funzione $\mathrm{h}: \mathrm{Data}
   \rightarrow \mathrm{Data}$ senza equazioni.
   
-  \[ \nu k.\pa{ \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(k,M)}}} | a(x).if\
-      \mathrm{h}\pa{(k,\mathrm{fst}(x))} = \mathrm{snd}(x)\ then\
-      \obar{b}\ang{\mathrm{fst}(x)}} \]
-  % TODO: spezzare in A, B, Inst\end{frame}
+  \begin{align*}
+    A & \;\eqdef\; \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(k,M)}}} \\
+    B & \;\eqdef\; a(x).if\ \mathrm{h}\pa{(k,\mathrm{fst}(x))} =
+        \mathrm{snd}(x)\ then\ \obar{b}\ang{\mathrm{fst}(x)} \\
+    Inst & \;\eqdef\; \nu k.\pa{ A | B } 
+  \end{align*}
 \end{frame}
 
 \begin{frame}{Cifratura simmetrica}
@@ -548,9 +538,12 @@
   rappresenta il testo in chiaro e $y$ la chiave.
   \vfill
   
-  \[ \nu k. \pa{ \obar{a}\ang{\mathrm{enc}(M,k)} | a\pa{x}.if\
-      \mathrm{enc}\pa{ \mathrm{dec}(x,k)} = x\ then\
-      \obar{b}\ang{\mathrm{dec}(x,k)}} \]
+  \begin{align*}
+    A & \;\eqdef\; \obar{a}\ang{\mathrm{enc}(M,k)} \\
+    B & \;\eqdef\; a\pa{x}.if\ \mathrm{enc}\pa{ \mathrm{dec}(x,k)} =
+        x\ then\ \obar{b}\ang{\mathrm{dec}(x,k)} \\
+    Inst & \;\eqdef\; \nu k. \pa{ A|B}
+  \end{align*}
 \end{frame}
 
 \begin{frame}{Cifratura asimmetrica}
@@ -558,17 +551,17 @@
   $\mathrm{pk}$ e $\mathrm{sk}$ tali che
   \[ \mathrm{dec}\pa{\mathrm{enc}\pa{x,\mathrm{pk}(y)},\mathrm{sk}(y)}
     = x \]
-  Potremmo chiedere altre propriet\`a, ad esempio:
-  \[ \mathrm{dec}\pa{\mathrm{enc}(x,y),z} =
-    \mathrm{enc}\pa{\mathrm{dec}(x,y),y} \]
-  \vfill
-
   \begin{align*}
     A &= \nu s.\pa{ \obar{a}\ang{\mathrm{pk}(s)}|
     b(x).\obar{c}\ang{\mathrm{dec}\pa{ x,\mathrm{sk}(s) } } } \\
     B &= a(y).\obar{b}\ang{\mathrm{enc}(M,y)} \\
     C &= A|B   
   \end{align*}
+  \vfill
+  \onslide<2->{
+  Potremmo chiedere altre propriet\`a, ad esempio:
+  \[ \mathrm{dec}\pa{\mathrm{enc}(x,y),z} =
+    \mathrm{enc}\pa{\mathrm{dec}(x,y),y} \]}
 \end{frame}
 
 \section{Equivalenze}
@@ -676,6 +669,7 @@
     sui frame
     \[ \varphi \approx \psi \Leftrightarrow \varphi \approx _s \psi \]
   \end{mylem}
+  \pause 
   \[ (M=N)\varphi \Leftrightarrow \pa{ \varphi | if\ N=M\ then\
       \obar{a}\ang{n}} \Downarrow a \]
 \end{frame}
@@ -706,7 +700,7 @@
   
   Le principali regole sono:
   \begin{itemize}
-  \item In: \( N(x).P \xrightarrow{N(M)} P\set{\sfrac{M}{x}} \)
+  \item In: \( N(x).P \xrightarrow{N(M)} P\bra{\sfrac{M}{x}} \)
   \item Out-Var \( \displaystyle \frac{x\not\in
       fv\pa{\obar{N}\ang{M}.P}}{\obar{N}\ang{M}.P \xrightarrow{\nu
         x.\obar{N}\ang{x}} P|\set{\sfrac{M}{x}}} \)
@@ -852,15 +846,15 @@
   \[ \nu y.\pa{ P_0| P_1 | \varphi } \]
   D'altra parte noi vorremmo che il valore di $y$ fosse riservato,
   cio\`e vorremmo l'equivalenza con il processo:
-  \[ \nu k.\pa{P_0|P_1|\set{\sfrac{k}{y}}} \]
+  \[ \nu k.\pa{P_0|P_1}\bra{\sfrac{k}{y}} \]
 \end{frame}
 
 \begin{frame}
   \begin{mypro}
     Siano $P_0$ e $P_1$ due processi con $y$ variabile libera e dove non
     appare il nome $k$, allora:
-    \[ \nu y.\pa{ P_0 | P_1 | \varphi } \approx \nu k.\pa{ P_0|P_1 |
-        \set{\sfrac{k}{y}}} | \nu s_0. \set{\sfrac{s_0}{x_0}} | \nu
+    \[ \nu y.\pa{ P_0 | P_1 | \varphi } \approx \nu k.\pa{ P_0|P_1 }
+        \bra{\sfrac{k}{y}} | \nu s_0. \set{\sfrac{s_0}{x_0}} | \nu
       s_1.\set{\sfrac{s_1}{x_1}} \]
   \end{mypro}
   
@@ -873,6 +867,52 @@
   L'equivalenza osservazionale si mantiene applicando il contesto $\nu
   y.\pa{ P_0 | P_1 | \_ }$.
 \end{frame}
+
+\section*{}
+
+\begin{frame}[plain]
+ \frametitle{Indice}
+ \tableofcontents
+\end{frame}
+
+
+\begin{frame}
+  \begin{align*}
+    A(M) & = \nu
+           c_{AB}. \pa{\obar{c_{AS}}\ang{c_{AB}}. \obar{c_{AB}}\ang{M}}
+    \\
+    B & = c_{SB}(x). x(y) .P \\
+    S & = c_{AS}(x) . \obar{c_{SB}} \ang{x} \\
+    Inst(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B} \\
+    B_{spec} & = c_{SB}(x). x(y). \pa{ P\bra{\sfrac{M}{y}}} \\ 
+    Inst_{spec}(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B_{spec}}
+  \end{align*}
+  \begin{itemize}
+  \item \textbf{Riservatezza:} $\forall M,M'\; P\bra{\sfrac{M}{y}}
+    \approx P\bra{\sfrac{M'}{y}} \Rightarrow Inst(M) \approx Inst(M')$;
+  \item \textbf{Integrit\`a:} $\forall M \; Inst(M) \approx
+    Inst_{spec}(M)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Esempio}
+  \begin{align*}
+    A(M) & = \nu k_{AB}. \pa{
+           \obar{c_{AS}}\ang{\set{k_{AB}}_{k_{AS}}}. \obar{c_{AB}}\ang{\set{M}_{k_{AB}}}}
+    \\
+    S & = c_{AS}(x).case\ x\ of\ \set{y}_{k_{AS}}in\ 
+        \obar{c_{SB}}\ang{\set{y}_{k_{SB}}} \\ 
+    B & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ c_{AB}(z). case\
+        z\ of\ \set{w}_y in\ P(w) \\ 
+    Inst(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B } \\
+    B_{spec} & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ 
+               c_{AB}(z). case\ z\ of\ \set{w}_y in\ P(M) \\
+    Inst_{s}(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B_{spec}}
+  \end{align*}
+\end{frame}
+
+
+
 
 \end{document}
 
