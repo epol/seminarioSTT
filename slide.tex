@@ -180,10 +180,11 @@
   Come nel CCS, possiamo restringere i nomi ad alcuni contesti, ad
   esempio nel processo:
   \begin{align*}
-  K(M) = \nu n. \pa{ \obar{n}\ang{M}.\mathbf{0} | n(x).P } | C & &  n\not\in
+  K(M) = \nu n. \pa{ \obar{n}\ang{M}.\mathbf{0} | n(x).P } & &  n\not\in
     fv(P)
   \end{align*}
-  
+  %TODO: far comparire un |C
+
   abbiamo che $C$ non pu\`o osservare il contenuto di $M$ se non per gli effetti
   di $P$, cioè:
   \[ P\set{\sfrac{M}{x}} \approx P\set{\sfrac{M'}{x}} \Rightarrow K(M)
@@ -299,10 +300,6 @@
                c_{AB}(z). case\ z\ of\ \set{w}_y in\ P(M) \\
     Inst_{s}(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B_{spec}}
   \end{align*}
-\end{frame}
-
-\begin{frame}{Semantica}
-  ???
 \end{frame}
 
 
@@ -443,7 +440,7 @@
 
 \subsection{Semantica}
 
-\begin{frame}{Contesto di valutazione}
+\begin{frame}{Contesti}
   Un contesto $E[\_]$ \`e un'espressione con un buco.
   \begin{mydef}[Contesto di valutazione]
     Un contesto di valutazione \`e un contesto il cui argomento non
@@ -526,16 +523,17 @@
     \mathrm{fst} &: \mathrm{Data} \rightarrow \mathrm{Data} \\
     \mathrm{snd} &: \mathrm{Data} \rightarrow \mathrm{Data}
   \end{align*}
-  Con $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x, \mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$ 
+  Con $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x, \mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$.
 \end{frame}
 
 \begin{frame}{Funzioni hash}
   Una funzione hash \`e una funzione $\mathrm{h}: \mathrm{Data}
   \rightarrow \mathrm{Data}$ senza equazioni.
   
-  \[ \nu k.\pa{ \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(s,M)}}} | a(x).if\
-      \mathrm{h}\pa{(s,\mathrm{fst}(x))} = \mathrm{snd}(x)\ then\
+  \[ \nu k.\pa{ \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(k,M)}}} | a(x).if\
+      \mathrm{h}\pa{(k,\mathrm{fst}(x))} = \mathrm{snd}(x)\ then\
       \obar{b}\ang{\mathrm{fst}(x)}} \]
+  % TODO: spezzare in A, B, Inst\end{frame}
 \end{frame}
 
 \begin{frame}{Cifratura simmetrica}
@@ -780,8 +778,100 @@
 
 \section{Esempi}
 
+\subsection{Diffie-Hellman Key Agreement}
+
+\begin{frame}{Funzioni}
+  Prendiamo due simboli di funzione $f$ (che prende due argomenti) e
+  $g$ (che prene un argomento) tali che
+  \[ f\pa{x,g(y)} = f\pa{x,g(y)} \]
+  \vfill
+
+  Vogliamo far parlare due partecipanti $A_0$ e $A_1$, per
+  semplicit\`a usiamo due canali monodirezionali $c_{01}$ e $c_{10}$,
+  vogliamo stabilire una chiave condivisa segreta $y$ da far
+  utilizzare a due processi $P_0$ e $P_1$.
+\end{frame}
+
 \begin{frame}
+  \begin{align*}
+    x_0 &= g(n_0) & x_1 &=g(n_1)
+  \end{align*}
+  \[ y_0 = f(n_0,x_1) = f(n_0,g(n_1)) = f(g(n_0),n_1) = g(x_0,n_1) = y_1 \]
+  \begin{align*}
+    \sigma _0 & \eqdef \set{\sfrac{g(n_0)}{x_0}} & \phi _0 & \eqdef
+                                                             \set{\sfrac{
+                                                             f(n_0,x_1)}{y}} \\
+    \sigma _1 & \eqdef \set{\sfrac{g(n_1)}{x_1}} & \phi _1 & \eqdef
+                                                             \set{\sfrac{
+                                                             f(x_0,n_1)}{y}} 
+  \end{align*}
+  \begin{align*}
+    A_0 &\eqdef \nu n_0.\pa{ \obar{c_{01}}\ang{x_0\sigma _0} |
+          c_{10}(x_1).P_0\phi _0 } \\
+    A_1 &\eqdef \nu n_1.\pa{ \obar{c_{10}}\ang{x_1\sigma _1} |
+          c_{01}(x_0).P_1\phi _1 }
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+    \begin{align*}
+    \sigma _0 & \eqdef \set{\sfrac{g(n_0)}{x_0}} & \phi _0 & \eqdef
+                                                             \set{\sfrac{
+                                                             f(n_0,x_1)}{y}} \\
+    \sigma _1 & \eqdef \set{\sfrac{g(n_1)}{x_1}} & \phi _1 & \eqdef
+                                                             \set{\sfrac{
+                                                             f(x_0,n_1)}{y}} 
+  \end{align*}
+  \[ \varphi \eqdef \pa{ \nu n_0.\pa{ \phi _0 | \sigma _0}} | \pa{ \nu
+      n_1 . \sigma _1 } \]
+  \begin{align*}
+    A_0 &\eqdef \nu n_0.\pa{ \obar{c_{01}}\ang{x_0\sigma _0} |
+          c_{10}(x_1).P_0\phi _0 } \\
+    A_1 &\eqdef \nu n_1.\pa{ \obar{c_{10}}\ang{x_1\sigma _1} |
+          c_{01}(x_0).P_1\phi _1 }
+  \end{align*}
+  L'esecuzione di $A_0|A_1$ porta a:
+  \begin{align*}
+    A_0 | A_1 \rightarrow ^* \;& \nu x_0.\nu x_1.\nu n_0.\nu
+                            n_1.\pa{ P_0 \phi _0 | P_1 \phi _1 |
+                            \sigma _0 | \sigma _1 } \\
+     \equiv \; &\nu x_0.\nu x_1.\nu n_0.\nu n_1.\nu y.\pa{ P_0 | P_1 |
+      \phi _0 | \sigma _0 | \sigma _1 } \\
+    \equiv \; & \nu y.\pa{ P_0| P_1 | \nu x_0. \nu x_1. \varphi }
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \[ \varphi \eqdef \pa{ \nu n_0.\pa{ \phi _0 | \sigma _0}} | \pa{ \nu
+      n_1 . \sigma _1 } \]
+  \[ A_0|A_1 \rightarrow ^* \nu y.\pa{ P_0| P_1 | \nu x_0. \nu x_1. \varphi } \]
+  Supponiamo che un attaccante possa leggere i messaggi dei canali
+  $c_{01}$ e $c_{10}$ ma non li possa modificare, avr\`a quindi
+  accesso alle variabili $x_0$ e $x_1$, il nostro processo quindi
+  diventa:
+  \[ \nu y.\pa{ P_0| P_1 | \varphi } \]
+  D'altra parte noi vorremmo che il valore di $y$ fosse riservato,
+  cio\`e vorremmo l'equivalenza con il processo:
+  \[ \nu k.\pa{P_0|P_1|\set{\sfrac{k}{y}}} \]
+\end{frame}
+
+\begin{frame}
+  \begin{mypro}
+    Siano $P_0$ e $P_1$ due processi con $y$ variabile libera e dove non
+    appare il nome $k$, allora:
+    \[ \nu y.\pa{ P_0 | P_1 | \varphi } \approx \nu k.\pa{ P_0|P_1 |
+        \set{\sfrac{k}{y}}} | \nu s_0. \set{\sfrac{s_0}{x_0}} | \nu
+      s_1.\set{\sfrac{s_1}{x_1}} \]
+  \end{mypro}
   
+  Si pu\`o dimostrare che
+  \[ \varphi \approx _s \nu s_0.\nu s_1.\nu k.\set{\sfrac{s_0}{x_0},
+      \sfrac{s_1}{x_1}, \sfrac{k}{y}} \]
+  Trattandosi di frame l'equivalenza statica si traduce in equivalenza
+  osservazionale.
+
+  L'equivalenza osservazionale si mantiene applicando il contesto $\nu
+  y.\pa{ P_0 | P_1 | \_ }$.
 \end{frame}
 
 \end{document}
