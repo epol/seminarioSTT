@@ -182,8 +182,8 @@
     fv(P)
   \end{align*}
 
-  abbiamo che $C$ non pu\`o osservare il contenuto di $M$ se non per gli effetti
-  di $P$, cioè:
+  esternamente non possiamo osservare il contenuto di $M$ se non per
+  gli effetti di $P$, cioè:
   \[ P\bra{\sfrac{M}{x}} \approx P\bra{\sfrac{M'}{x}} \Rightarrow K(M)
     \approx K(M') \]
   
@@ -206,10 +206,16 @@
       \node[mnode] (A) at (0,0) {A};
       \node[mnode] (S) at (2,1) {S};
       \node[mnode] (B) at (4,0) {B};
-      
+      \onslide<2->{\node[blue] (Al) at (-.5,-.5) {\small $C_{AB}$};}
+      \onslide<3->{\node[blue] (Sl) at (2,1.5) {\small $C_{AB}$};}
+      \onslide<4->{\node[blue] (Bl) at (4.5,-.5) {\small $C_{AB}$};}
+
       \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
       \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
-      \onslide<2->{\draw[->] (A) -- node[below] {$c_{AB}$} (B) ;}
+      \onslide<5->{\draw[->] (A) -- node[below] {$c_{AB}$} (B) ;}
+      \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and +(left:1cm) .. node[above] {$\ang{c_{AB}}$} (S) ;}
+      \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\ang{c_{AB}}$} (B) ;}
+%      \draw[->] (A) to [bend left] (S) ;
     \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -258,6 +264,7 @@
     decifrato con la chiave giusta.
   \end{itemize}
   \vfill
+  \pause
 
   Perdiamo visibilit\`a degli aspetti probabilistici e di
   complessit\`a. Ad esempio non vediamo gli attacchi del compleanno.
@@ -276,6 +283,25 @@
   \end{align*}
 
   %TODO: disegno
+  \begin{center}
+    \begin{tikzpicture}[mnode/.style={circle,fill=blue!20}]
+      \node[mnode] (A) at (0,0) {A};
+      \node[mnode] (S) at (2,1) {S};
+      \node[mnode] (B) at (4,0) {B};
+      \node[blue] (Al) at (-.5,-.5) {\small $k_{AS}\onslide<2->{, k_{AB}}$};
+      \node[blue] (Sl) at (2,1.5) {\small $k_{AS},
+        k_{SB}\onslide<3->{, k_{AB}}$};
+      \node[blue] (Bl) at (4.5,-.5) {\small $k_{SB}\onslide{, k_{AB}}$};
+
+      \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
+      \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
+      \draw[->] (A) -- node[below] {$c_{AB}$} (B) ;
+      \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and +(left:1cm) .. node[above] {$\ang{k_{AB}}$} (S) ;}
+      \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\ang{k_{AB}}$} (B) ;}
+%      \draw[->] (A) to [bend left] (S) ;
+    \end{tikzpicture}
+  \end{center}
+
 \end{frame}
 
 
@@ -342,7 +368,7 @@
 
   Avremo anche una teoria che ci permetter\`a di scrivere:
   \begin{align*}
-    \Sigma \vdash M = N & & \Sigma \vdash M \neq N
+    \Sigma \vdash M = N & & \Sigma \not\vdash M = N
   \end{align*}
 \end{frame}
 
@@ -363,7 +389,7 @@
 \begin{frame}{Processi estesi}
   \begin{align*}
     A,B,C & \coloncolonequals & \text{extended processes} \\
-          & P & \text{palin process} \\
+          & P & \text{plain process} \\
           & A | B & \text{parallel composition} \\
           & \nu n.A & \text{name restriction} \\
           & \nu x.A & \text{variable restriction} \\
@@ -424,7 +450,7 @@
 \subsection{Semantica}
 
 \begin{frame}{Contesti}
-  Un contesto $E[\_]$ \`e un'espressione con un buco.
+  Un contesto $E[\_]$ \`e un'espressione con un argomento.
   \begin{mydef}[Contesto di valutazione]
     Un contesto di valutazione \`e un contesto il cui argomento non
     \`e sottoposto a replicazione, condizionale, input o output.
@@ -462,7 +488,6 @@
     } \]
   dove $P$ \`e un processo, $fv(P)\ = \emptyset$, $fv(\tilde M) =
   \emptyset$ e $\set{\tilde n} \subseteq fn(\tilde M)$.
-  % TODO: forse fv(P) = \set{\tilde x}.
   \vfill
 
   Per ogni frame $\varphi$ chiuso:
@@ -478,13 +503,17 @@
     if\ M=M\ then\ P\ else\ Q & \rightarrow P \\
     if\ M=N\ then\ P\ else\ Q & \rightarrow Q \\
   \end{align*}
-  \vfill
-  \pause 
-  Ad esempio se $x \not\in fv(N)\cup fv(M)\cup fv(P)$:
+\end{frame}
+
+\begin{frame}
+    Ad esempio se $x \not\in fv(N)\cup fv(M)\cup fv(P)$:
   \begin{align*}
-    \obar{N}\ang{M}.P | N(x).Q & \equiv \nu x.\pa{ \set{\sfrac{M}{x}}
-                                 | \obar{N} \ang{x}.P | N(x).Q } \\
+    \obar{N}\ang{M}.P | N(x).Q & \equiv \nu x. \pa{ \set{\sfrac{M}{x}} } | \obar{N}\ang{M}.P | N(x).Q \\
+    & \equiv \nu x. \pa{ \set{\sfrac{M}{x}} | \obar{N}\ang{M}.P | N(x).Q }\\
+    & \equiv \nu x.\pa{ \set{\sfrac{M}{x}} | \obar{N} \ang{x}.P | N(x).Q } \\
     & \rightarrow \nu x.\pa{\set{\sfrac{M}{x}}|P|Q} \\
+    & \equiv \nu x.\pa{\set{\sfrac{M}{x}}|P|Q\bra{\sfrac{M}{x}}} \\
+    & \equiv \nu x.\pa{\set{\sfrac{M}{x}}}|P|Q\bra{\sfrac{M}{x}} \\
     & \equiv P|Q\bra{\sfrac{M}{x}}
   \end{align*}
 \end{frame}
@@ -519,10 +548,10 @@
   \rightarrow \mathrm{Data}$ senza equazioni.
   
   \begin{align*}
-    A & \;\eqdef\; \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(k,M)}}} \\
-    B & \;\eqdef\; a(x).if\ \mathrm{h}\pa{(k,\mathrm{fst}(x))} =
+    A & \;=\; \obar{a}\ang{ \pa{M,\mathrm{h}\pa{(k,M)}}} \\
+    B & \;=\; a(x).if\ \mathrm{h}\pa{(k,\mathrm{fst}(x))} =
         \mathrm{snd}(x)\ then\ \obar{b}\ang{\mathrm{fst}(x)} \\
-    Inst & \;\eqdef\; \nu k.\pa{ A | B } 
+    Inst & \;=\; \nu k.\pa{ A | B } 
   \end{align*}
 \end{frame}
 
@@ -539,10 +568,10 @@
   \vfill
   
   \begin{align*}
-    A & \;\eqdef\; \obar{a}\ang{\mathrm{enc}(M,k)} \\
-    B & \;\eqdef\; a\pa{x}.if\ \mathrm{enc}\pa{ \mathrm{dec}(x,k)} =
+    A & \;=\; \obar{a}\ang{\mathrm{enc}(M,k)} \\
+    B & \;=\; a\pa{x}.if\ \mathrm{enc}\pa{ \mathrm{dec}(x,k)} =
         x\ then\ \obar{b}\ang{\mathrm{dec}(x,k)} \\
-    Inst & \;\eqdef\; \nu k. \pa{ A|B}
+    Inst & \;=\; \nu k. \pa{ A|B}
   \end{align*}
 \end{frame}
 
