@@ -1,0 +1,50 @@
+\include{header}
+
+\begin{document}
+
+\include{slide-content}
+
+\section*{}
+
+\begin{frame}[plain]
+ \frametitle{Indice}
+ \tableofcontents
+\end{frame}
+
+
+\begin{frame}
+  \begin{align*}
+    A(M) & = \nu
+           c_{AB}. \pa{\obar{c_{AS}}\ang{c_{AB}}. \obar{c_{AB}}\ang{M}}
+    \\
+    B & = c_{SB}(x). x(y) .P \\
+    S & = c_{AS}(x) . \obar{c_{SB}} \ang{x} \\
+    Inst(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B} \\
+    B_{spec} & = c_{SB}(x). x(y). \pa{ P\bra{\sfrac{M}{y}}} \\ 
+    Inst_{spec}(M) & = \nu c_{AS}. \nu c_{SB}. \pa{ A(M) | S | B_{spec}}
+  \end{align*}
+  \begin{itemize}
+  \item \textbf{Riservatezza:} $\forall M,M'\; P\bra{\sfrac{M}{y}}
+    \approx P\bra{\sfrac{M'}{y}} \Rightarrow Inst(M) \approx Inst(M')$;
+  \item \textbf{Integrit\`a:} $\forall M \; Inst(M) \approx
+    Inst_{spec}(M)$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Esempio}
+  \begin{align*}
+    A(M) & = \nu k_{AB}. \pa{
+           \obar{c_{AS}}\ang{\set{k_{AB}}_{k_{AS}}}. \obar{c_{AB}}\ang{\set{M}_{k_{AB}}}}
+    \\
+    S & = c_{AS}(x).case\ x\ of\ \set{y}_{k_{AS}}in\ 
+        \obar{c_{SB}}\ang{\set{y}_{k_{SB}}} \\ 
+    B & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ c_{AB}(z). case\
+        z\ of\ \set{w}_y in\ P(w) \\ 
+    Inst(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B } \\
+    B_{spec} & = c_{SB}(x).case\ x\ of\ \set{y}_{k_{SB}}in\ 
+               c_{AB}(z). case\ z\ of\ \set{w}_y in\ P(M) \\
+    Inst_{s}(M) & = \nu k_{AS}. \nu k_{SB}. \pa{ A(M) | S | B_{spec}}
+  \end{align*}
+\end{frame}
+
+\end{document}
