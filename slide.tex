@@ -291,7 +291,7 @@
       \node[blue] (Al) at (-.5,-.5) {\small $k_{AS}\onslide<2->{, k_{AB}}$};
       \node[blue] (Sl) at (2,1.5) {\small $k_{AS},
         k_{SB}\onslide<3->{, k_{AB}}$};
-      \node[blue] (Bl) at (4.5,-.5) {\small $k_{SB}\onslide{, k_{AB}}$};
+      \node[blue] (Bl) at (4.5,-.5) {\small $k_{SB}\onslide<4->{, k_{AB}}$};
 
       \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
       \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
@@ -465,7 +465,7 @@
   \begin{align*}
     A & \equiv A|\mathbf{0} & A|(B|C) & \equiv (A|B)|C \\
     A|B & \equiv B|A & !P & \equiv P|!P \\ \\
-    \nu n.\mathbf{0} & \equiv 0 & \nu u. \nu v.A & \equiv \nu v. \nu
+    \nu n.\mathbf{0} & \equiv \mathbf{0} & \nu u. \nu v.A & \equiv \nu v. \nu
                                                    u.A \\
     A| \nu u.B & \equiv \nu u. (A|B) & \text{when } & u\not\in fv(A)
                                                      \cup fn(A) \\ \\
@@ -806,7 +806,7 @@
 \begin{frame}{Funzioni}
   Prendiamo due simboli di funzione $f$ (che prende due argomenti) e
   $g$ (che prene un argomento) tali che
-  \[ f\pa{x,g(y)} = f\pa{x,g(y)} \]
+  \[ f\pa{x,g(y)} = f\pa{g(x),y} \]
   \vfill
 
   Vogliamo far parlare due partecipanti $A_0$ e $A_1$, per
@@ -834,6 +834,34 @@
     A_1 &\eqdef \nu n_1.\pa{ \obar{c_{10}}\ang{x_1\sigma _1} |
           c_{01}(x_0).P_1\phi _1 }
   \end{align*}
+
+  \begin{center}
+    \begin{tikzpicture}[mnode/.style={circle,fill=blue!20}]
+      \node[mnode] (A0) at (0,0) {$A_0$};
+      \node[mnode] (A1) at (4,0) {$A_1$};
+      
+      \node (l0) at (-1,-.5) {\small $n_0\onslide<2->{,
+          g(n_1)}\onslide<3->{, f(n_0,g(n_1))}$} ;
+      \node (l1) at (5,-.5) {\small $n_1\onslide<2->{,
+          g(n_0)}\onslide<3->{, f(g(n_0),n_1)}$} ;
+      
+      \onslide<2>{\draw[->,red] (A0) to [bend left] node[above] {$g(n_0)$} (A1);}
+      \onslide<2>{\draw[->,red] (A1) to [bend left] node[above]
+        {$g(n_1)$} (A0);}
+      \onslide<3->{\draw[<->,blue] (A0) to node [above] {$y$} (A1) ;}
+%       \onslide<2->{\node[blue] (Al) at (-.5,-.5) {\small $C_{AB}$};}
+%       \onslide<3->{\node[blue] (Sl) at (2,1.5) {\small $C_{AB}$};}
+%       \onslide<4->{\node[blue] (Bl) at (4.5,-.5) {\small $C_{AB}$};}
+
+%       \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
+%       \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
+%       \onslide<5->{\draw[->] (A) -- node[below] {$c_{AB}$} (B) ;}
+%       \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and +(left:1cm) .. node[above] {$\ang{c_{AB}}$} (S) ;}
+%       \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\ang{c_{AB}}$} (B) ;}
+% %      \draw[->] (A) to [bend left] (S) ;
+    \end{tikzpicture}
+  \end{center}
+
 \end{frame}
 
 \begin{frame}
