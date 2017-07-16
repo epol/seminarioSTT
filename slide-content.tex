@@ -1,4 +1,4 @@
-\title{Applied $\pi$ calculus}
+\title[Applied $\pi$ calculus]{Dallo spi calculus all’applied $\pi$ calculus}
 %\subtitle{}
 %\author{Enrico Polesel}
 %\institute[Scuola Normale Superiore]{Scuola Normale Superiore}
@@ -108,6 +108,7 @@
       \onslide<5->{\draw[->] (A) -- node[below] {$c_{AB}$} (B) ;}
       \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and +(left:1cm) .. node[above] {$\ang{c_{AB}}$} (S) ;}
       \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\ang{c_{AB}}$} (B) ;}
+      \onslide<5->{\draw[->,red] (A) to [bend right] node[below] {$\ang{M}$} (B) ;}
 %      \draw[->] (A) to [bend left] (S) ;
     \end{tikzpicture}
   \end{center}
@@ -189,9 +190,11 @@
       \draw[->] (A) -- node[above] {$c_{AS}$} (S) ;
       \draw[->] (S) -- node[above] {$c_{SB}$} (B) ;
       \draw[->] (A) -- node[below] {$c_{AB}$} (B) ;
-      \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and +(left:1cm) .. node[above] {$\ang{k_{AB}}$} (S) ;}
-      \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\ang{k_{AB}}$} (B) ;}
+      \onslide<3>{\draw[->,red] (A) .. controls +(up:1cm) and
+        +(left:1cm) .. node[above] {\small $\set{k_{AB}}_{k_{AS}}$} (S) ;}
+      \onslide<4>{\draw[->,red] (S) .. controls +(right:1cm) and +(up:1cm) .. node[above] {$\set{k_{AB}}_{k_{SB}}$} (B) ;}
 %      \draw[->] (A) to [bend left] (S) ;
+      \onslide<5->{\draw[->,red] (A) to [bend right] node {$\set{M}_{k_{AB}}$} (B) ; }
     \end{tikzpicture}
   \end{center}
 
@@ -297,16 +300,16 @@
 
 \begin{frame}{Frame}
   \begin{mydef}[Frame]
-    Un processo esteso costituito solo da estensioni attive con
+    Un processo esteso costituito solo da sostituzioni attive con
     eventualmente dei nomi ristretti.
   \end{mydef}
+  \[ \varphi = \nu n_1.\nu n_2.\dots \nu n_k . \pa{ \set{
+        \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}}} = \nu
+    \tilde n. \sigma \]
   \[ \nu \tilde n = \nu n_1. \dots \nu n_k \]
   \[ \sigma = \set{ \sfrac{\tilde M}{\tilde x}} = \set{
       \sfrac{M_1}{x_1}, \dots \sfrac{M_l}{x_l}} = \set{
       \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}} \]
-  \[ \varphi = \nu n_1.\nu n_2.\dots \nu n_k . \pa{ \set{
-        \sfrac{M_1}{x_1}}| \cdots | \set{\sfrac{M_l}{x_l}}} = \nu
-    \tilde n. \sigma \]
   \vfill
 
   Dato un processo esteso $A$ posso rimuovere tutto ci\`o che non \`e
@@ -337,13 +340,15 @@
   \end{align*}
   \vfill
   
-  Diciamo che un processo esteso $A$ \`e chiuso se $fv(A) = dom(A)$.
+  \begin{mydef}[Processo chiuso]
+    Diciamo che un processo esteso $A$ \`e chiuso se $fv(A) = dom(A)$.
+  \end{mydef}
 \end{frame}
 
 \subsection{Semantica}
 
 \begin{frame}{Contesti}
-  Un contesto $E[\_]$ \`e un'espressione con un argomento.
+  Un contesto $E[\_]$ \`e un'espressione di processi attivi con un argomento.
   \begin{mydef}[Contesto di valutazione]
     Un contesto di valutazione \`e un contesto il cui argomento non
     \`e sottoposto a replicazione, condizionale, input o output.
@@ -433,6 +438,8 @@
   \item $\mathrm{fst}\pa{\mathrm{pair}(x,y)} = x$,
   \item $\mathrm{snd}\pa{\mathrm{pair}(x,y)} = y$.
   \end{itemize}
+  \vfill
+  \[ (x,y) \eqdef \mathrm{pair}(x,y) \]
 
 \end{frame}
 
@@ -462,7 +469,7 @@
   
   \begin{align*}
     A & \;=\; \obar{a}\ang{\mathrm{enc}(M,k)} \\
-    B & \;=\; a\pa{x}.if\ \mathrm{enc}\pa{ \mathrm{dec}(x,k)} =
+    B & \;=\; a\pa{x}.if\ \mathrm{enc}\pa{ \mathrm{dec}(x,k),k} =
         x\ then\ \obar{b}\ang{\mathrm{dec}(x,k)} \\
     Inst & \;=\; \nu k. \pa{ A|B}
   \end{align*}
